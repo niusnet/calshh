@@ -11,7 +11,7 @@ interface PriceConfigProps {
 }
 
 export function PriceConfigComponent({ config, onUpdate }: PriceConfigProps) {
-  const handleUpdate = (field: keyof PriceConfig, value: number) => {
+  const handleUpdate = (field: keyof PriceConfig, value: number | string) => {
     const updatedConfig = { ...config, [field]: value };
     onUpdate(updatedConfig);
   };
