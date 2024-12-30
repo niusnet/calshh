@@ -1,3 +1,8 @@
+export interface Dimensions {
+  width: number;
+  height: number;
+}
+
 export interface PriceConfig {
   regularPricePerUnit: number;
   thickPricePerUnit: number;
@@ -11,4 +16,3 @@ export interface PresetMeasurement {
   width: number;
   height: number;
 }
-
