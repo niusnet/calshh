@@ -6,9 +6,9 @@ interface TableVisualizationProps {
 export function TableVisualization({ width, height }: TableVisualizationProps) {
   const maxSize = 300; // Tamaño máximo de la visualización
   const aspectRatio = width / height;
-  
+
   let displayWidth, displayHeight;
-  
+
   if (aspectRatio > 1) {
     displayWidth = maxSize;
     displayHeight = maxSize / aspectRatio;
@@ -18,9 +18,9 @@ export function TableVisualization({ width, height }: TableVisualizationProps) {
   }
 
   return (
-    <div className="relative border-2 border-gray-400 rounded-md">
+    <div className="relative border-2 border-black rounded-md">
       <div
-        className="bg-gray-100"
+        className="bg-white"
         style={{
           width: `${displayWidth}px`,
           height: `${displayHeight}px`,
