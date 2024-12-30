@@ -1,0 +1,43 @@
+@media print {
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+    color: #34495e;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 5px;
+  }
+
+  .summary-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .total-price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    border-top: 1px solid #bdc3c7;
+    padding-top: 10px;
+  }
+}
+

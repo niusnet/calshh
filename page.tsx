@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { PriceConfigComponent } from '../components/price-config'
-import { Calculator } from '../components/calculator'
-import { RegisterSW } from '../components/register-sw'
-import type { PriceConfig } from '../types/measurements'
+import { PriceConfigComponent } from './components/price-config'
+import { Calculator } from './components/calculator'
+import type { PriceConfig } from './types/measurements'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function Home() {
@@ -47,7 +46,6 @@ export default function Home() {
           </div>
         </TabsContent>
       </Tabs>
-      <RegisterSW />
     </main>
   );
 }
