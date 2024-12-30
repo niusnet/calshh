@@ -8,6 +8,14 @@
   "scope": "/",
   "theme_color": "#000000",
   "background_color": "#000000",
+  "id": "dev.josediaz.calshh",
+  "dir": "auto",
+  "lang": "es",
+  "prefer_related_applications": true,
+  "display_override": [
+    "standalone",
+    "window-controls-overlay"
+  ],
   "icons": [
     {
       "src": "icons/icon-48x48.png",
