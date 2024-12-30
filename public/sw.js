@@ -1,138 +1,125 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.2.0/workbox-sw.js");
+// public/sw.js
 
-workbox.setConfig({ debug: true });
+// Importar workbox
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
+
+// Configuración básica
+workbox.setConfig({
+  debug: false // Cambia a true para modo desarrollo
+});
 
 const {
-    routing: { registerRoute, setCatchHandler },
-    strategies: { CacheFirst, NetworkFirst, StaleWhileRevalidate },
-    cacheableResponse: { CacheableResponsePlugin },
-    expiration: { ExpirationPlugin },
-    precaching: { matchPrecache, precacheAndRoute },
+  strategies,
+  routing,
+  cacheableResponse,
+  expiration,
+  precaching
 } = workbox;
 
-precacheAndRoute([{ url: "/offline.html", revision: null }]);
+// Nombre del cache
+const CACHE_NAME = 'my-pwa-cache-v1';
 
-// Cache page navigations (html) with a Network First strategy
-registerRoute(
-    ({ request }) => request.mode === "navigate",
-    new NetworkFirst({
-        cacheName: "pages",
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [200],
-            }),
-        ],
-    })
-);
+// Precarga de recursos críticos
+precaching.precacheAndRoute([
+  { url: '/offline.html', revision: '1' },
+  { url: '/manifest.json', revision: '1' },
+  // Añade aquí otros recursos críticos que quieras precargar
+]);
 
-// Cache Google Fonts
-registerRoute(
-    ({ url }) =>
-        url.origin === "https://fonts.googleapis.com" ||
-        url.origin === "https://fonts.gstatic.com",
-    new StaleWhileRevalidate({
-        cacheName: "pwa-google-fonts",
-        plugins: [new ExpirationPlugin({ maxEntries: 20 })],
-    })
-);
-
-// Cache Images
-registerRoute(
-    ({ request }) => request.destination === "image",
-    new CacheFirst({
-        cacheName: "pwa-images",
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxEntries: 60,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-            }),
-        ],
-    })
-);
-
-// Cache CSS, JS, Manifest, and Web Worker
-registerRoute(
-    ({ request }) =>
-        request.destination === "script" ||
-        request.destination === "style" ||
-        request.destination === "manifest" ||
-        request.destination === "worker",
-    new StaleWhileRevalidate({
-        cacheName: "pwa-static-assets",
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxEntries: 32,
-                maxAgeSeconds: 24 * 60 * 60, // 24 hours
-            }),
-        ],
-    })
-);
-
-// Catch routing errors, like if the user is offline
-setCatchHandler(async ({ event }) => {
-    // Return the precached offline page if a document is being requested
-    if (event.request.destination === "document") {
-        return matchPrecache("/offline.html");
-    }
-
-    return Response.error();
-});
-
-// This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
-
-const CACHE = "pwabuilder-offline-page";
-
-// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
-const offlineFallbackPage = "/offline.html";
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
-
-self.addEventListener('install', async (event) => {
-  event.waitUntil(
-    caches.open(CACHE)
-      .then((cache) => cache.add(offlineFallbackPage))
-  );
-});
-
-if (workbox.navigationPreload.isSupported()) {
-  workbox.navigationPreload.enable();
-}
-
-workbox.routing.registerRoute(
-  new RegExp('/*'),
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE
+// Estrategia para navegación (páginas HTML)
+routing.registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  new strategies.NetworkFirst({
+    cacheName: 'pages-cache',
+    plugins: [
+      new cacheableResponse.CacheableResponsePlugin({
+        statuses: [200]
+      }),
+      new expiration.ExpirationPlugin({
+        maxEntries: 25,
+        maxAgeSeconds: 24 * 60 * 60 // 24 horas
+      })
+    ]
   })
 );
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const preloadResp = await event.preloadResponse;
+// Estrategia para imágenes
+routing.registerRoute(
+  ({ request }) => request.destination === 'image',
+  new strategies.CacheFirst({
+    cacheName: 'image-cache',
+    plugins: [
+      new cacheableResponse.CacheableResponsePlugin({
+        statuses: [0, 200]
+      }),
+      new expiration.ExpirationPlugin({
+        maxEntries: 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 días
+      })
+    ]
+  })
+);
 
-        if (preloadResp) {
-          return preloadResp;
-        }
+// Estrategia para assets estáticos (JS, CSS, fonts)
+routing.registerRoute(
+  ({ request }) => 
+    request.destination === 'script' ||
+    request.destination === 'style' ||
+    request.destination === 'font',
+  new strategies.StaleWhileRevalidate({
+    cacheName: 'static-resources',
+    plugins: [
+      new cacheableResponse.CacheableResponsePlugin({
+        statuses: [0, 200]
+      }),
+      new expiration.ExpirationPlugin({
+        maxEntries: 32,
+        maxAgeSeconds: 24 * 60 * 60 // 24 horas
+      })
+    ]
+  })
+);
 
-        const networkResp = await fetch(event.request);
-        return networkResp;
-      } catch (error) {
+// Estrategia para Google Fonts
+routing.registerRoute(
+  ({url}) => url.origin === 'https://fonts.googleapis.com' || 
+             url.origin === 'https://fonts.gstatic.com',
+  new strategies.StaleWhileRevalidate({
+    cacheName: 'google-fonts',
+    plugins: [
+      new expiration.ExpirationPlugin({
+        maxEntries: 20
+      })
+    ]
+  })
+);
 
-        const cache = await caches.open(CACHE);
-        const cachedResp = await cache.match(offlineFallbackPage);
-        return cachedResp;
-      }
-    })());
+// Manejo de fallos de navegación (offline)
+workbox.routing.setCatchHandler(async ({ event }) => {
+  if (event.request.destination === 'document') {
+    return caches.match('/offline.html');
+  }
+  return Response.error();
+});
+
+// Activación del service worker
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Mensaje para skip waiting
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });
