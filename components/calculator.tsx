@@ -6,8 +6,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { TableVisualization } from './table-visualization'
 import { Summary } from './summary'
+import { presetMeasurements } from '../data/presets'
 import type { Dimensions, PriceConfig, CalculationResult, AdditionalItem } from '../types/measurements'
 import { calculatePrice } from '../utils/calculator'
 import { usePDF } from 'react-to-pdf';
@@ -35,6 +44,13 @@ export function Calculator({ config }: CalculatorProps) {
     setResult(calculationResult);
   }, [dimensions, isThick, config, kitPrice, additionalItems]);
 
+  const handlePresetChange = (value: string) => {
+    const preset = presetMeasurements.find(p => `${p.width}x${p.height}` === value);
+    if (preset) {
+      setDimensions({ width: preset.width, height: preset.height });
+    }
+  };
+
   const addItem = () => {
     if (newItemName && newItemPrice) {
       setAdditionalItems([...additionalItems, { name: newItemName, price: parseFloat(newItemPrice) }]);
@@ -60,24 +76,63 @@ export function Calculator({ config }: CalculatorProps) {
           <TableVisualization width={dimensions.width} height={dimensions.height} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="width">Ancho (cm)</Label>
-            <Input
-              id="width"
-              type="number"
-              value={dimensions.width}
-              onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value) || 0})}
-            />
+        <div className="space-y-4">
+          <Label>Medidas Preconfiguradas</Label>
+          <Select onValueChange={handlePresetChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar medidas" />
+            </SelectTrigger>
+            <SelectContent>
+              {presetMeasurements.map((preset) => (
+                <SelectItem key={`${preset.width}x${preset.height}`} value={`${preset.width}x${preset.height}`}>
+                  {preset.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <Label htmlFor="width">Ancho: {dimensions.width}cm</Label>
+            <div className="flex items-center gap-4">
+              <Slider
+                id="width"
+                min={10}
+                max={300}
+                step={5}
+                value={[dimensions.width]}
+                onValueChange={(value) => setDimensions({ ...dimensions, width: value[0] })}
+                className="flex-1"
+              />
+              <Input
+                type="number"
+                value={dimensions.width}
+                onChange={(e) => setDimensions({ ...dimensions, width: parseFloat(e.target.value) || 0 })}
+                className="w-20"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="height">Alto (cm)</Label>
-            <Input
-              id="height"
-              type="number"
-              value={dimensions.height}
-              onChange={(e) => setDimensions({...dimensions, height: parseFloat(e.target.value) || 0})}
-            />
+
+          <div className="space-y-4">
+            <Label htmlFor="height">Alto: {dimensions.height}cm</Label>
+            <div className="flex items-center gap-4">
+              <Slider
+                id="height"
+                min={10}
+                max={300}
+                step={5}
+                value={[dimensions.height]}
+                onValueChange={(value) => setDimensions({ ...dimensions, height: value[0] })}
+                className="flex-1"
+              />
+              <Input
+                type="number"
+                value={dimensions.height}
+                onChange={(e) => setDimensions({ ...dimensions, height: parseFloat(e.target.value) || 0 })}
+                className="w-20"
+              />
+            </div>
           </div>
         </div>
         

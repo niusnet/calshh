@@ -6,3 +6,9 @@ export interface PriceConfig {
   currency: string;
 }
 
+export interface PresetMeasurement {
+  name: string;
+  width: number;
+  height: number;
+}
+
