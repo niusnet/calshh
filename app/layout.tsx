@@ -10,6 +10,16 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   themeColor: '#3b82f6',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  authors: [
+    {
+      name: "Jose Diaz",
+      url: "https://josediaz.dev",
+    },
+  ],
+  icons: [
+    { rel: "apple-touch-icon", url: "icons/icon-128x128.png" },
+    { rel: "icon", url: "icons/icon-128x128.png" },
+  ],
 }
 
 export default function RootLayout({
