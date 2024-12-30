@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Calculadora de Medidas de Madera',
+  title: 'Calculadora de Medidas SHH...',
   description: 'Calculadora para medidas y precios de madera',
   manifest: '/manifest.json',
   themeColor: '#3b82f6',
