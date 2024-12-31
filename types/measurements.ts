@@ -23,7 +23,7 @@ export interface PanelModel {
   baseWidth: number;
   baseHeight: number;
   basePrice: number;
-  baseThickness: number; // Nuevo campo para el grosor base
+  baseThickness: number; 
 }
 
 export interface AnchorKit {

@@ -3,11 +3,11 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const panelModels: PanelModel[] = [
-  { id: 1, name: 'Hosh', baseWidth: 60, baseHeight: 120, basePrice: 110 },
-  { id: 2, name: 'Cloud', baseWidth: 100, baseHeight: 100, basePrice: 110 },
-  { id: 3, name: 'Square', baseWidth: 60, baseHeight: 60, basePrice: 90 },
-  { id: 4, name: 'Omni', baseWidth: 60, baseHeight: 120, basePrice: 110 },
-  { id: 5, name: 'Skin', baseWidth: 60, baseHeight: 120, basePrice: 130 },
+  { id: 1, name: 'Hosh', baseWidth: 60, baseHeight: 120, basePrice: 110, baseThickness:0 },
+  { id: 2, name: 'Cloud', baseWidth: 100, baseHeight: 100, basePrice: 110, baseThickness:0 },
+  { id: 3, name: 'Square', baseWidth: 60, baseHeight: 60, basePrice: 90, baseThickness:0 },
+  { id: 4, name: 'Omni', baseWidth: 60, baseHeight: 120, basePrice: 110, baseThickness:0 },
+  { id: 5, name: 'Skin', baseWidth: 60, baseHeight: 120, basePrice: 130, baseThickness:0 },
 ]
 
 interface PanelSelectorProps {
