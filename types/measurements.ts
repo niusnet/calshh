@@ -12,6 +12,12 @@ export interface PriceConfig {
   regularUnitSize: number;
 }
 
+export interface PresetMeasurement {
+  name: string;
+  width: number;
+  height: number;
+}
+
 export interface ThicknessOption {
   thickness: number;
   pricePerUnit: number;

@@ -36,6 +36,12 @@ export function calculatePrice(
     totalPrice,
     priceBreakdown: {
       basePrice,
+      width: dimensions.width,
+      height: dimensions.height,
+      totalLength: dimensions.width + dimensions.height,
+      pricePerUnit: thickness.pricePerUnit,
+      unitCount: Math.ceil((dimensions.width + dimensions.height) / config.regularUnitSize),
+      materialTotal: thickness.pricePerUnit * Math.ceil((dimensions.width + dimensions.height) / config.regularUnitSize),
       widthAdjustment,
       heightAdjustment,
       thicknessPrice,
