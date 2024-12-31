@@ -6,6 +6,10 @@ export interface PriceConfig {
   dimensionPriceIncrement: number;
   dimensionIncrementSize: number;
   ivaRate: number;
+  regularPricePerUnit: number;
+  thickPricePerUnit: number;
+  thickUnitSize: number;
+  regularUnitSize: number;
 }
 
 export interface ThicknessOption {
@@ -37,6 +41,12 @@ export interface CalculationResult {
   totalPrice: number;
   priceBreakdown: {
     basePrice: number;
+    width: number;
+    height: number;
+    totalLength: number;
+    pricePerUnit: number;
+    unitCount: number;
+    materialTotal: number;
     widthAdjustment: number;
     heightAdjustment: number;
     thicknessPrice: number;
