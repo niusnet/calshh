@@ -1,35 +1,52 @@
-// @ts-nocheck
-
-import { PriceConfig, Dimensions, CalculationResult, AdditionalItem } from '../types/measurements';
+import { PanelModel, Dimensions, AnchorKit, AdditionalItem, CalculationResult, PriceConfig, ThicknessOption } from '../types/measurements';
 
 export function calculatePrice(
-  dimensions: Dimensions, 
-  isThick: boolean, 
+  panel: PanelModel,
+  dimensions: Dimensions,
+  thickness: ThicknessOption,
   config: PriceConfig,
-  kitPrice: number,
-  additionalItems: AdditionalItem[]
+  anchorKit: AnchorKit | null,
+  additionalItems: AdditionalItem[] = []
 ): CalculationResult {
-  const unitSize = isThick ? config.thickUnitSize : config.regularUnitSize;
-  const pricePerUnit = isThick ? config.thickPricePerUnit : config.regularPricePerUnit;
+  const basePrice = panel.basePrice;
   
-  const totalLength = (dimensions.width * 2) + (dimensions.height * 2);
-  const unitCount = Math.ceil(totalLength / unitSize);
-  const materialTotal = unitCount * pricePerUnit;
+  // Ajuste por dimensiones
+  const widthAdjustment = Math.max(0, Math.floor((dimensions.width - panel.baseWidth) / config.dimensionIncrementSize)) * config.dimensionPriceIncrement;
+  const heightAdjustment = Math.max(0, Math.floor((dimensions.height - panel.baseHeight) / config.dimensionIncrementSize)) * config.dimensionPriceIncrement;
 
-  const additionalTotal = additionalItems.reduce((sum, item) => sum + item.price, 0);
-  const totalPrice = materialTotal + kitPrice + additionalTotal;
+  // Precio por grosor
+  const thicknessPrice = thickness.thickness > 10 ? thickness.pricePerUnit : 0;
+
+  // Precio del kit de anclaje
+  const anchorKitPrice = anchorKit ? anchorKit.price : 0;
+
+  // Total de items adicionales
+  const additionalItemsTotal = additionalItems.reduce((sum, item) => sum + item.price, 0);
+
+  // Subtotal
+  const subtotal = basePrice + widthAdjustment + heightAdjustment + thicknessPrice + anchorKitPrice + additionalItemsTotal;
+
+  // Cálculo de IVA
+  const ivaAmount = config.ivaRate > 0 ? subtotal * (config.ivaRate / 100) : 0;
+
+  // Precio total
+  const totalPrice = subtotal + ivaAmount;
 
   return {
     totalPrice,
     priceBreakdown: {
-      width: dimensions.width,
-      height: dimensions.height,
-      totalLength,
-      unitCount,
-      pricePerUnit,
-      materialTotal
+      basePrice,
+      widthAdjustment,
+      heightAdjustment,
+      thicknessPrice,
+      anchorKitPrice,
+      additionalItemsTotal,
+      subtotal,
+      ivaAmount
     },
-    kitPrice,
+    dimensions,
+    thickness: thickness.thickness,
+    anchorKit,
     additionalItems
   };
 }

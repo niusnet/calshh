@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { PriceConfigComponent } from '../components/price-config'
 import { Calculator } from '../components/calculator'
-import { RegisterSW } from '../components/register-sw'
 import type { PriceConfig } from '../types/measurements'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -13,13 +12,35 @@ export default function Home() {
     thickPricePerUnit: 10,
     regularUnitSize: 10,
     thickUnitSize: 5,
-    currency: '$'
+    currency: '$',
+    thicknessOptions: [
+      { thickness: 10, pricePerUnit: 5 },
+      { thickness: 15, pricePerUnit: 6 },
+      { thickness: 20, pricePerUnit: 7 },
+      { thickness: 25, pricePerUnit: 8 },
+      { thickness: 30, pricePerUnit: 10 },
+    ],
+    panelModels: [
+      { id: 1, name: 'Hosh', baseWidth: 60, baseHeight: 120, basePrice: 110, baseThickness: 10 },
+      { id: 2, name: 'Cloud', baseWidth: 100, baseHeight: 100, basePrice: 110, baseThickness: 10 },
+      { id: 3, name: 'Square', baseWidth: 60, baseHeight: 60, basePrice: 90, baseThickness: 10 },
+      { id: 4, name: 'Omni', baseWidth: 60, baseHeight: 120, basePrice: 110, baseThickness: 10 },
+      { id: 5, name: 'Skin', baseWidth: 60, baseHeight: 120, basePrice: 130, baseThickness: 10 }
+    ],
+    anchorKits: [
+      { id: 1, name: 'Kit Básico', price: 10 },
+      { id: 2, name: 'Kit Estándar', price: 20 },
+      { id: 3, name: 'Kit Premium', price: 30 }
+    ],
+    dimensionPriceIncrement: 10,
+    dimensionIncrementSize: 10,
+    ivaRate: 0,
   });
 
   return (
     <main className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8 text-center">
-        Calculadora de Medidas SHH...
+      Calculadora de Medidas SHH...
       </h1>
       
       <Tabs defaultValue="calculator" className="w-full">
@@ -31,23 +52,12 @@ export default function Home() {
           <Calculator config={config} />
         </TabsContent>
         <TabsContent value="config">
-          <div className="space-y-8">
-            <PriceConfigComponent 
-              config={config} 
-              onUpdate={setConfig} 
-            />
-            <div className="p-4 bg-muted rounded-lg">
-              <h2 className="font-semibold mb-2">Notas Importantes:</h2>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Cada {config.regularUnitSize}cm = {config.regularPricePerUnit}{config.currency} (material regular)</li>
-                <li>Cada {config.thickUnitSize}cm = {config.thickPricePerUnit}{config.currency} (material grueso)</li>
-                <li>No olvides colocar renglón de kit anclaje pared y techo</li>
-              </ul>
-            </div>
-          </div>
+          <PriceConfigComponent 
+            config={config} 
+            onUpdate={setConfig} 
+          />
         </TabsContent>
       </Tabs>
-      <RegisterSW />
     </main>
   );
 }
